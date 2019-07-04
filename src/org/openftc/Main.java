@@ -40,7 +40,7 @@ public class Main
     @Parameter(names = "-h", help = true, description = "Print help")
     private boolean help;
 
-    @Parameter(names = {"-i", "--input"}, description = "AAR input file", required = true)
+    @Parameter(names = {"-i", "--input"}, description = "AAR/JAR input file", required = true)
     private String inputFilepath;
 
     @Parameter(names = {"-s", "--sources"}, description = "Sources JAR file (optional)", required = false)
@@ -58,6 +58,13 @@ public class Main
     @Parameter(names = {"-v", "--version"}, description = "Artifact version", required = true)
     private String artifactVersion;
 
+    private String artifactExtension;
+    private String artifactPackaging;
+    private static final String ARTIFACT_PACKAGING_AAR = "aar";
+    private static final String ARTIFACT_PACKAGING_JAR = "jar";
+    private static final String AAR_FILE_EXTENSION = ".aar";
+    private static final String JAR_FILE_EXTENSION = ".jar";
+
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException
     {
         Main instance = new Main();
@@ -74,7 +81,7 @@ public class Main
 
             if (instance.help)
             {
-                System.out.println("AAR Repackager v1.0");
+                System.out.println("AAR/JAR Repackager v1.0");
                 jCommander.usage();
             }
             else
@@ -91,6 +98,21 @@ public class Main
 
     private void run() throws IOException, NoSuchAlgorithmException
     {
+        if(inputFilepath.endsWith(AAR_FILE_EXTENSION))
+        {
+            artifactExtension = AAR_FILE_EXTENSION;
+            artifactPackaging = ARTIFACT_PACKAGING_AAR;
+        }
+        else if(inputFilepath.endsWith(JAR_FILE_EXTENSION))
+        {
+            artifactExtension = JAR_FILE_EXTENSION;
+            artifactPackaging = ARTIFACT_PACKAGING_JAR;
+        }
+        else
+        {
+            throw new RuntimeException("Was not given JAR or AAR as input");
+        }
+
         String[] groupNames = groupName.split("\\.");
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -121,7 +143,7 @@ public class Main
 
         folderToPutArtifactIn.mkdirs();
 
-        String nameOfAarArtifact = artifactName + "-" + artifactVersion + ".aar";
+        String nameOfAarArtifact = artifactName + "-" + artifactVersion + artifactExtension;
         String fullPathToArtifact = folderToPutArtifactIn.getAbsolutePath() + File.separator + nameOfAarArtifact;
 
         /*
@@ -153,7 +175,7 @@ public class Main
                 .replaceAll("GROUP_ID_HERE", groupName)
                 .replaceAll("ARTIFACT_ID_HERE", artifactName)
                 .replaceAll("ARTIFACT_VERSION_HERE", artifactVersion)
-                .replaceAll("ARTIFACT_EXTENSION_HERE", "aar");
+                .replaceAll("ARTIFACT_EXTENSION_HERE", artifactPackaging);
         Files.write(pathToPom, pomContent.getBytes(charset));
 
         /*
