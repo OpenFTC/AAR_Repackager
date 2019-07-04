@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>GROUP_ID_HERE</groupId>
+  <artifactId>ARTIFACT_ID_HERE</artifactId>
+  <versioning>
+    <release>ARTIFACT_VERSION_HERE</release>
+    <versions>
+      <version>ARTIFACT_VERSION_HERE</version>
+    </versions>
+    <lastUpdated>20190703153327</lastUpdated>
+  </versioning>
+</metadata>
