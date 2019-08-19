@@ -34,6 +34,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Main
 {
@@ -190,14 +192,15 @@ public class Main
         Files.copy(getClass().getResourceAsStream("/maven-metadata.xml"), pathToMetaData, StandardCopyOption.REPLACE_EXISTING);
 
         /*
-         * Do a find and replace for the needed items in the POM
+         * Do a find and replace for the needed items in the metadata
          */
         Charset charset2 = StandardCharsets.UTF_8;
         String metadataContent = new String(Files.readAllBytes(pathToMetaData), charset2);
         metadataContent = metadataContent
                 .replaceAll("GROUP_ID_HERE", groupName)
                 .replaceAll("ARTIFACT_ID_HERE", artifactName)
-                .replaceAll("ARTIFACT_VERSION_HERE", artifactVersion);
+                .replaceAll("ARTIFACT_VERSION_HERE", artifactVersion)
+                .replaceAll("ARTIFACT_DATE_HERE", new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
         Files.write(pathToMetaData, metadataContent.getBytes(charset2));
 
         /*
